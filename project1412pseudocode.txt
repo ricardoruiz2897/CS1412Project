@@ -1,0 +1,485 @@
+Project pseudocode
+Ricardo Ruiz
+
+Global Data:
+    Structure Person:
+        char name[25] represents name
+        int balance represents the balance
+        int gain represents the gain of each player
+        int player_points represents the current points, 
+
+    int person_length - how big is the array at some point
+
+Function name: init_file
+    Description: This Function initiates the Structure according to what its on the file
+    Input: Person person[10] - array of Structure person
+    Output: NONE
+    Side effect: The information on the file is now in the array of Structures
+
+    Data: pointer FILE *file
+         Globals: person_length
+    
+    Problem: pass the information from the file to the array of Structures
+    
+    Plan: 
+
+        1.-Iterate through file and save each element of the file if there is any,
+            save the first thing into the name, no matter if empty or not
+            if i is equal to zero, then it's the first iteration, so we set the name to nothing and break
+            1.1 if i == 0, then person_length = 0
+                else person_length = i
+                         
+        for(i=0;;i++)
+
+            fscan(file, &person[i].name)
+
+            if strcmp(person[i].name, '\0') equals 0:
+                person_length = 0
+                break
+
+            else:
+                person_length = i
+                break
+                
+            1.2.- get the balance and gain if it hasnt break yet
+            fscan(file, &person[i].balance);
+            fscan(file, &person[i].gain);
+
+        2.-close the file
+        fclose(file)
+
+
+Function name: update_file
+    Description: This function updates the file according to the values of the Global Structure
+    Input: Person person[10] - array of Structure person
+    Output: NONE
+    Side effect: the information of the file is updated with the information on the Structures
+    Data: pointer file FILE *file, the length of the array  int person_length
+
+    Problem: write the information of the Structure array on the file
+
+    Plan:
+        1.- Open and clear the file, then close the file
+        
+            1.1.-clear the file by opening it as "w"
+            file = open(filename, "w")
+            close(file)
+        
+        2.-Iterate through array and print each element on array of Structure
+
+            for(i<person_length;i++)
+                fprint(person[i].name)
+                fprint(person[i].balance)
+                fprint(person[i].gain)
+        
+        3.-close the file to save changes
+            close(file)
+
+        
+Function name: nameIndex
+    Description: this function returns an index of person[100] given a name
+    Input: char name, FILE *file, Person person[10] - array of Structure person
+    Output: int index
+    Side effect:NONE
+
+    Data: current size: int person_length
+
+    Problem: return the index of person[i].name when its equal to zero'
+
+    Plan: 
+        1.-if person_length equals zero, return -1
+         2.-Else, Iterate through all the names on Structure
+            2.1.-if the comparison of one of them is zero, then we return its index as i
+            2.2.- if last iteration, name not on file, return -1
+
+            if person_length equals 0:
+                return -1
+            else:
+                for(i<person_length;i++)
+                    if strcmp(person[i].name,name) equals 0:
+                        return i
+                    if last iteration:
+                        return person_length
+
+Function name: yes_no
+    Description: this function returns 1 if the value entered is one and 0 if the value entered is two
+    Input: int value -  a given value, Person person[10] - array of Structure person
+    Output: 1 if the Input is 1
+            0 if input is 2
+    Side effect:NONE
+
+    Problem: return 1 when input 1 and 0 if input is 2
+    
+    Plan:
+        if value equals 1
+            return 1
+        else if vale equals 2
+            return 0
+
+Function name: top_balance
+    Description: This function gets the name of the user and sets its balance
+    Input: Person person[10] array of structures
+    Output: NONE
+    Data: 
+        -pointer FILE file
+        -char name[25] - this var saves the name temporarily
+        -int index - this var gets the index of the given name in the structure
+        -int val - save temporal values
+
+    Sideeffect: the user will be registered in the file and array of structures and will be prompted to add new balance
+
+    Plan: 
+        1.-open the file to read and write
+          file = fopen(filename, "a")
+        
+        2.-get name of the user
+            prinf(what is your name: ) 
+            scan(s,name)
+        
+        3.-look for the name in file and get index using nameIndex function
+            index = nameIndex(name, file)    
+
+        4.-Check if name on file
+           
+           -if the file is empty, we just add it
+            if index equals -1
+                fprint(file, name) -> just print the name on file
+
+                -ask and get balance
+                print(what is your top balance)
+                scan(d, person[index].balance)
+
+                -print the balance on file
+                fprint(file, person[index].balance)
+
+                -size of array changes now
+                person_length = 1
+
+                -close the point file and initiate thee structure with new elements
+                fclose(file)
+                init_file()
+            
+            -if index is equal to the person legth and there is space available, we know the name is not on the file, so we add it
+            else if index == person_length and person_length != 10
+                -set person name to name
+                 strcpy(person[index].name, name)
+
+                -ask and get balance
+                print(what is your top balance)
+                scan(d, person[index].balance)
+
+                -print the balance on file
+                fprint(file, person[index].balance)
+
+                -close the point file and initiate thee structure with new elements
+                fclose(file)
+                init_file
+            
+            -the user is already on the file
+            else if index betweeen 0 and 9
+                -tell the user we already have it on file and ask if he/she want to are more money
+                print(you are already on the file, do you want to add more balance?)
+
+                -get the answer
+                scan(d, val)
+
+                if Yes: ask for the balance he/she wants to add. Use yes_no function
+                if(yes_no(val)==1)
+                    -ask how much to add
+                    print(how much would you like to add)
+                    scan(d, val)
+                   
+                    -add it to his/her balance
+                    person[index].balance += val
+
+                    -prompt message with their new balance
+                    print(your new balance is: person[25].balance)
+
+                    -update the file
+                    update_file
+                    
+                    -close file to save
+                    fclose(file)
+	   -There are already ten names on file
+            
+	else if person_lenght greater equals 10
+		 
+		-print(Sorry we cannot hold anymore any more people, here are the names you can pick from)
+		 
+		 -print all the names in file
+			forj = 0, j<person_length, j++
+                		print(person[j].name)
+	-close the file
+		fclose(file)
+
+       
+		  
+Function name: throw_dice
+    Description: this function simulates the dice throw and returns the sum of the two dices
+    Input: NONE
+    Output: int sum- the sum of the two dices
+    Side effect: display on screen the sum of the two dices
+    Data: int dice1, dice2 -> representing each dice
+
+    Problem: throw the dices and return the sum
+
+    Subproblem1: throw the dices
+    Subproblem2: return the sum
+
+    Plan:
+        1.-wait
+        print(press enter to throw dices)
+        getchar() getchar()
+
+        2.-simulate the throw
+            2.2 rand()%6 + 1 to get a random number between 1 and 7 and assing to dice
+            dice1 = rand%6 + 1
+            dice2 = rand%6 + 1
+        
+        3.- sum equals dice1+dice2
+            sum = dice1 + dice2
+        
+        4.-tell the user Output number
+            print(the sum is "sum")
+        
+        5.- return sum
+    
+
+Function name: play_game
+    Description: this function is the game logic 
+    Input: int first_turn -> to know if it is the first turn
+           int once -> to only ask for name one
+           int index -> to know the current index of name
+	   Person person[10] - array of Structure person
+    Output: NONE
+    Side effect: If the user wins, the gain increases and the balance changes as well
+
+    Data: -pointer FILE file
+          -array char name[25] -> to save name temporarily
+          -int still_playing -> To know if the user still playing or not
+          -int sum -> to save the sum of the dices
+          -int value -> the value of win or lose
+    
+    Plan: 
+        1.-open file to read and write
+         file = fopen(filename, "a")
+
+         2.-enter a do-while loop to end when the users balance = 0 or he/she wants to end the game
+         do
+            -Check if it is the first time to ask for user name
+            if once equal 1
+                -get name
+                print(what is your name)
+
+                -save in char name
+                scan(s,name)
+
+                -get the index of the name
+                index = nameIndex(name)
+
+                -print error message if the name is not on file and break
+                if index equals person_lenght
+                    print(name not on file)
+                    break
+		
+		else if person[index].balance <= 0
+		    print(add balance to your account)
+		    break
+
+                -change the var to avoid it in the next iteration
+                once = 0
+
+            -Now we go to the game logic
+            
+            -get the sum of throwing dices
+            sum = throw_dices
+
+            -check if win or lose and if it is the first turn
+            if (sum equals 7 or sum equals 11 and first_turn equals 1) or (person[index].player_points equals sum && first_turn not equals 1)
+
+                person[index].gain += 10
+		person[index].balance += 10
+                print(you win, your new gain is: person[index].gain)
+
+                -update file
+                update_file()
+
+            else if sum equals 2 or sum equals 3 or sum equals 12 and first_turn == 1 or (sum equals 7 and first_turn not equals 1)
+
+                    person[index].balance -= 1
+                    print(You lose. Your current balance is person[index].balance)
+
+		    -check if out of balance
+		    if balance equals 0
+			-wait for keyboard
+			 -close file
+			 -still playing = -1
+			 -return 
+		 
+		    -start a new game
+		     new game = 1
+
+                    -update file
+                    update_file()
+		
+	    else if first_turn equals 1
+		person[index].player_points equals sum
+		print(now we have to roll player_points to win)
+
+            
+            -now check if the user wants to keep playing
+            -prompt the options
+            print(do you want to keep playing?)
+
+            -get the value
+            scan(d, value)
+
+            -check if the user wants to keep playing
+            if val equal 1
+                -call game again with different parameters since a turn has passed
+                play_game(0,0,index)
+            
+            else
+                -change still_playing to break loop
+                still_playing = 0
+            
+
+         while person[index].balance > 0 and still_playing = 0
+
+Function name: top_five
+    Description: This function prints the five top player according to their balance or price
+    Input: int balance_price -> weather it going to evaluate by balance or price 
+	   Person person[10] - array of Structure person
+    Output: NONE
+    Side effect: display on screen the names and balances of the top players according to their balance or price (depending on input)
+
+    Data: current size of array: int person_length
+
+          -Structure TOP_FIVE: Structure that will contain the top five
+                char name[25] represents name
+                int balance represents the balance
+                int gain represents the gain
+        
+          -Structure AUX: Structure that will store the full array of Structure person temporarily
+                char name[25] represents name
+                int balance represents the balance
+                int gain represents the gain
+        
+          -TOP_FIVE top[5] - array of Structure TOP_FIVE
+          -AUX aux[10] - array of Structure aux
+          -int count - we use to have control of indexes 
+          -int g_index - is the index of greeates in array according to balance or gain
+          -int greatest - represents the current greeatest balance or gain
+    
+    Problem: print the names and balance of the top players according to their balance
+
+    Plan: 1.- Copy the main Structure array person, into aux
+            1.1.-Use for loop to move through array person
+            1.2.- assign the value of person.name and person.balance to aux, according to index
+                for(i=0;i<person_length;i++)
+                    strcpy(aux[i].name,person[i].name)
+                    aux[i].balance = person[i].balance
+
+          2.- if the input is one:
+          if(input==1)
+            2.1-Populate top five with the top five in aux, according to balance
+                use while loop to make sure on the five greatest enter top 5
+                while count < 5
+                    2.2 look for the greatest on array aux[]
+                        for(i=0;i<person_length;i++)
+                            //whe found set to greatest and g_index
+                            if aux[i].balance > greatest
+                                greatest = aux[i].balance
+                                g_index = i
+
+                        -set the greatest value on the top five 
+                        strcpy(top_balance[count].name , aux[g_index].name)
+                        top_balance[count].balance = aux[g_index].balance
+
+                        -set aux[g_index] to zero for next iteration
+                        aux[g_index].balance = 0
+
+                        -move the count
+                        count++;
+            
+            3.-out of while loop
+                print the elements of top_five_balance
+                for(i<5)
+                    print(top[i].name)
+                    print(top[i].balance)
+        
+        4.-if the iput is two
+            Same story but gain instead of balance
+                  if(input==2)
+            2.1-Populate top five with the top five in aux, according to gain
+                use while loop to make sure on the five greatest enter top 5
+                while count < 5
+                    2.2 look for the greatest on array aux[]
+                        for(i=0;i<person_length;i++)
+                            //whe found set to greatest and g_index
+                            if aux[i].gain > greatest
+                                greatest = aux[i].gain
+                                g_index = i
+
+                        -set the greatest value on the top five 
+                        strcpy(top_balance[count].name , aux[g_index].name)
+                        top_balance[count].gain = aux[g_index].gain
+
+                        -set aux[g_index] to zero for next iteration
+                        aux[g_index].balance = 0
+
+                        -move the count
+                        count++
+            
+            3.-out of while loop
+                print the elements of top_five_balance
+                for(i<5)
+                    print(top[i].name)
+                    print(top[i].gain)      
+Function name: main
+    Input: NONE
+    Output: 0
+    Sideeffect: -initiates Structure
+                -displays a menu with the option
+    Data: int menu_var -> the variable that controls the menu
+
+    Plan: 
+
+	initiate Person person[10] - array of Structure person
+
+        1.-Initialize structure
+        init_file
+
+        2.-print menu and receive user input
+        print(0)Top balance, 
+              1)play game
+              2)top five balance
+              3)top five price
+              4)exit)
+        scan(d, menu_var)'
+
+        3.- while loop to repeat infinitely
+            while(1)
+                4.-Use switch to have menu control
+                switch menu_var
+
+                     -if user presses 0 call top_balance function and break
+                    case 0 - top_balance
+
+                    -if user presses 1 call play_game function with arguments 1,1,0 and break
+                    case 1 - play_game(1,1,0)
+
+
+                    -if user presses 2 call top_five function with 1 as arguments and break
+                    case 2 - top_five(1) 
+
+                    -if user presses 3 call top_five function with arguments 2 and break
+                    case 3 - top_five(2)
+                    break
+
+                    -if user presses 4 exit
+                    case 4 - exit
+ 
+                    -if the user presses another thing tell him hes wrong
+                    case default (wrong option)
+
